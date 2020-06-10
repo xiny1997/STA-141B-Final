@@ -35,7 +35,9 @@ ui <- fluidPage(
                                         selectInput("country", "Country",c("-",country$Country)),
                                         dateRangeInput("date", "Date",
                                                        start = NULL, end = NULL, min = "2020/03/05", max = Sys.Date() -1 ,format = "yyyy/mm/dd",
-                                                       separator = " to ")
+                                                       separator = " to "),
+                                        actionButton("clrdate","Clear Date")
+                                        
              ),position = "right",
              mainPanel(h4("Cases Over Time"),tabsetPanel(id = "tabs",
                                                          tabPanel("Confirmed Information", value = "confirmed",plotOutput("scatterplot1"),tableOutput("country_summary1")),
@@ -55,6 +57,11 @@ server <- function(input, output, session) {
     invalidateLater(1000, session)
     
     format(Sys.time())
+  })
+  
+  observeEvent(input$clrdate, {
+    updateDateRangeInput(session, "date",
+                         start = NA, end = NA, min = "2020/03/05", max = Sys.Date() -1)
   })
   
   summary <- reactive({
@@ -171,9 +178,9 @@ server <- function(input, output, session) {
                       global_summary()$TotalRecovered),
                labels <- c("Total Cases","Total Death","Total Recovered"))
     piepercent<- round(100*x/sum(x), 1)
-    pie(df$x,labels = piepercent, main = "Total COV-ID19 Pie Chart",col = c("orange", "black", "green"))
+    pie(df$x,labels = piepercent, main = "Total COV-ID19 Pie Chart",col = c("pink", "black", "green"))
     legend("topright", c("Total Cases","Total Death","Total Recovered"), cex = 0.8,
-           fill = c("orange", "black", "green"))
+           fill = c("pink", "black", "green"))
   })
   
   output$pie3 <- renderPlot({
@@ -182,9 +189,9 @@ server <- function(input, output, session) {
                       country_summary()$TotalRecovered),
                labels <- c("Total Confirmed","Total Death","Total Recovered"))
     piepercent<- round(100*x/sum(x), 1)
-    pie(df$x,labels = piepercent, main = paste("Total COV-ID19 Cases in",input$country," Pie Chart"),col = c("orange", "black", "green"))
+    pie(df$x,labels = piepercent, main = paste("Total COV-ID19 Cases in",input$country," Pie Chart"),col = c("pink", "black", "green"))
     legend("topright", c("Total Cases","Total Death","Total Recovered"), cex = 0.8,
-           fill = c("orange", "black", "green"))
+           fill = c("pink", "black", "green"))
   })
   
   output$countrysum <- renderTable({
